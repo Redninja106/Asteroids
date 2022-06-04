@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Timers;
 using SimulationFramework;
@@ -34,9 +35,10 @@ internal class AsteroidSpawner : Entity
 
     private void Timer_Elapsed(object sender, ElapsedEventArgs e)
     {
-        Vector2 asteroidPosition = target.Transform.Position + camera.Width / 2f * Vector2.FromAngle(Random.Shared.NextSingle() * MathF.Tau);
+        var a = Random.Shared.NextSingle() * MathF.Tau;
+        Vector2 asteroidPosition = target.Transform.Position + camera.Width / 2f * new Vector2(MathF.Cos(a), MathF.Sin(a));
 
-        World.AddEntity(new Asteroid(1f, asteroidPosition, (target.Transform.Position - asteroidPosition).Normalized() * (1 + Random.Shared.NextSingle() * 2), Random.Shared.NextSingle() * 2 - 1));
+        World.AddEntity(new Asteroid(1f, asteroidPosition, Vector2.Normalize(target.Transform.Position - asteroidPosition) * (1 + Random.Shared.NextSingle() * 2), Random.Shared.NextSingle() * 2 - 1));
 
         Console.WriteLine("Spawned Asteroid");
     }

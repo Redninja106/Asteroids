@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 
 namespace Asteroids;
 
@@ -14,11 +16,11 @@ internal class Bullet : Entity, IRenderable, ICollidable, IDestructable
     private const float SIZE = 0.1f;
     private static readonly Vector2[] bulletPoly = new Vector2[] 
     { 
-        (-SIZE/2f, -SIZE / 2f), 
-        (SIZE / 2f, -SIZE / 2f), 
-        (SIZE / 2f, SIZE / 2f), 
-        (-SIZE / 2f, SIZE / 2f), 
-        (-SIZE / 2f, -SIZE / 2f) 
+        new(-SIZE/2f, -SIZE / 2f), 
+        new(SIZE / 2f, -SIZE / 2f), 
+        new(SIZE / 2f, SIZE / 2f), 
+        new(-SIZE / 2f, SIZE / 2f), 
+        new(-SIZE / 2f, -SIZE / 2f) 
     };
 
     public Bullet(Ship shooter, Vector2 position, Vector2 velocity)
@@ -36,7 +38,8 @@ internal class Bullet : Entity, IRenderable, ICollidable, IDestructable
     public void Render(ICanvas canvas)
     {
         this.Transform.Apply(canvas);
-        canvas.DrawRect(0, 0, SIZE, SIZE, Color.White, Alignment.Center);
+        canvas.Fill(Color.White);
+        canvas.DrawRect(0, 0, SIZE, SIZE, Alignment.Center);
     }
 
     public override void Update()

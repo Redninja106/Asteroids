@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 
 namespace Asteroids;
 
@@ -23,7 +25,7 @@ internal class Camera : Entity
 
     public void Apply()
     {
-        this.canvas.Transform = CreateScreenToWorld();
+        this.canvas.SetTransform(CreateScreenToWorld());
     }
 
     public Matrix3x2 CreateScreenToWorld()
@@ -37,9 +39,7 @@ internal class Camera : Entity
 
     public Matrix3x2 CreateWorldToScreen()
     {
-        MathUtils.Matrix3x2Invert(CreateScreenToWorld(), out Matrix3x2 result);
+        Matrix3x2.Invert(CreateScreenToWorld(), out Matrix3x2 result);
         return result;
     }
-
-   
 }

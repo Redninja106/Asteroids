@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 
 namespace Asteroids;
 
@@ -34,7 +36,7 @@ internal class Asteroid : Entity, IRenderable, ICollidable, IDestructable
             float length = 1f;
             length += MathF.Sin(shapeModifier * angle + Random.Shared.NextSingle()) * variability + Random.Shared.NextSingle() * jaggedness;
 
-            asteroidPoly[i] = Vector2.FromAngle(angle) * length;
+            asteroidPoly[i] = new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * length;
         }
 
         asteroidPoly[detail] = asteroidPoly[0];
@@ -46,9 +48,9 @@ internal class Asteroid : Entity, IRenderable, ICollidable, IDestructable
     public void Render(ICanvas canvas)
     {
         Transform.Apply(canvas);
-        canvas.SetDrawMode(DrawMode.Border);
-        canvas.SetStrokeWidth(.05f);
-        canvas.DrawPolygon(asteroidPoly, Color.White);
+        canvas.Stroke(Color.White);
+        canvas.StrokeWidth(.05f);
+        canvas.DrawPolygon(asteroidPoly);
 
     }
 
@@ -104,7 +106,7 @@ internal class Asteroid : Entity, IRenderable, ICollidable, IDestructable
 
     private Asteroid CreateAsteroid(float angle, float scale)
     {
-        Vector2 dir = Vector2.FromAngle(angle) * 2.5f * scale;
+        Vector2 dir = new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * 2.5f * scale;
         return new Asteroid(scale, this.Transform.Position + dir, (dir + dir * Random.Shared.NextSingle()), Random.Shared.NextSingle());
     }
 }

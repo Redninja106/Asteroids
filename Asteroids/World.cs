@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 using SimulationFramework.IMGUI;
 
 namespace Asteroids;
@@ -74,7 +76,7 @@ internal class World : IRenderable
             if (entity != other && other is ICollidable otherCollidable)
             {
                 if (Polygon.Collide(collidable.GetCollider(), entity.Transform, otherCollidable.GetCollider(), other.Transform))
-                {
+                { 
                     collisions.Add(other);
                 }
             }
@@ -85,25 +87,26 @@ internal class World : IRenderable
 
     public void Render(ICanvas canvas)
     {
-        canvas.SetDrawMode(DrawMode.Border);
-        canvas.SetStrokeWidth(.05f); 
         ImGui.CheckBox("Render Colliders", ref this.renderColliders);
 
         if (renderColliders)
         {
+            canvas.StrokeWidth(.05f);
+            
             foreach (var e in entities)
             {
                 if (e is ICollidable c)
                 {
-                    using (canvas.Push())
-                    {
-                        e.Transform.Apply(canvas);
-                        var collider = c.GetCollider();
-                        canvas.DrawPolygon(collider, Color.DarkRed);
-                        var convexCollider = new List<Vector2>(collider);
-                        Polygon.MakeConvex(convexCollider);
-                        canvas.DrawPolygon(convexCollider, Color.Red);
-                    }
+                    canvas.PushState();
+                    e.Transform.Apply(canvas);
+                    var collider = c.GetCollider();
+                    canvas.Stroke(Color.DarkRed);
+                    canvas.DrawPolygon(collider);
+                    var convexCollider = new List<Vector2>(collider);
+                    Polygon.MakeConvex(convexCollider);
+                    canvas.Stroke(Color.Red);
+                    canvas.DrawPolygon(convexCollider);
+                    canvas.PopState();
                 }
             }
         }

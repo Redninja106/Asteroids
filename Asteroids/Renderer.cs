@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 
 namespace Asteroids;
 
@@ -20,8 +21,9 @@ internal static class Renderer
     {
         for (int i = 0; i < renderingObjects.Count; i++)
         {
-            using (canvas.Push())
-                renderingObjects[i].Item2.Render(canvas);
+            canvas.PushState();
+            renderingObjects[i].Item2.Render(canvas);
+            canvas.PopState();
         }
 
         renderingObjects.Clear();

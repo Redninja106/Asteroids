@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 
 namespace Asteroids;
 
@@ -29,26 +31,31 @@ public struct Transform
 
     public Vector2 Forward 
     { 
-        get => Vector2.FromAngle(Rotation);
+        get => VecFromAngle(Rotation);
         set => Rotation = MathF.Atan2(value.Y, value.X);
     }
 
     public Vector2 Right
     {
-        get => Vector2.FromAngle(Rotation - MathF.PI / 2);
+        get => VecFromAngle(Rotation - MathF.PI / 2);
         set => Rotation = MathF.Atan2(value.Y, value.X) + MathF.PI / 2f;
     }
 
     public Vector2 Left
     {
-        get => Vector2.FromAngle(Rotation + MathF.PI / 2f);
+        get => VecFromAngle(Rotation + MathF.PI / 2f);
         set => Rotation = MathF.Atan2(Position.Y, Position.X) - MathF.PI / 2f;
     }
 
     public Vector2 Backward
     {
-        get => Vector2.FromAngle(Rotation + MathF.PI);
+        get => VecFromAngle(Rotation + MathF.PI);
         set => Rotation = MathF.Atan2(Position.Y, Position.X) - MathF.PI;
+    }
+
+    private Vector2 VecFromAngle(float angle)
+    {
+        return new Vector2(MathF.Cos(angle), MathF.Sin(angle));
     }
 
     public void Apply(ICanvas canvas)
@@ -68,7 +75,7 @@ public struct Transform
 
     public Matrix3x2 CreateInvMatrix()
     {
-        MathUtils.Matrix3x2Invert(CreateMatrix(), out Matrix3x2 result);
+        Matrix3x2.Invert(CreateMatrix(), out Matrix3x2 result);
         return result;
     }
 

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 using SimulationFramework.IMGUI;
 
 namespace Asteroids;
@@ -55,7 +57,7 @@ internal static class Polygon
             for (int i = 0; i < polyA.Length - 1; i++)
             {
                 var diff = polyA[i] - polyA[i + 1];
-                Vector2 axis = (-diff.Y, diff.X);
+                Vector2 axis = new(-diff.Y, diff.X);
                 var pa = Project(axis, polyA, transformA);
                 var pb = Project(axis, polyB, transformB);
 

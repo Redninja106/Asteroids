@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 
 namespace Asteroids;
 
 internal class Ship : Entity, IRenderable, IDestructable, ICollidable
 {
-    private static readonly Vector2[] shipPoly = new Vector2[] { (1, 0), (-1, .5f), (-.8f, 0), (-1, -.5f), (1, 0), };
-    private static readonly Vector2[] thrustPoly = new Vector2[] { (-.1f, .25f),  (-.7f, 0f), (-.1f, -.25f), (0, 0) };
+    private static readonly Vector2[] shipPoly = new Vector2[] { new(1, 0), new(-1, .5f), new(-.8f, 0), new(-1, -.5f), new(1, 0), };
+    private static readonly Vector2[] thrustPoly = new Vector2[] { new(-.1f, .25f),  new(-.7f, 0f), new(-.1f, -.25f), new(0, 0), new(-.1f, .25f) };
 
     private Vector2 velocity;
     private float acceleration = 25;
@@ -44,20 +46,20 @@ internal class Ship : Entity, IRenderable, IDestructable, ICollidable
             thrustAnimationState = MathF.Max(thrustAnimationState, 0);
         }
 
-        using (canvas.Push())
-        {
-            canvas.SetDrawMode(DrawMode.Fill);
-            canvas.Translate(-.8f, 0);
-            canvas.Scale(thrustAnimationState * thrustAnimationState);
-            canvas.DrawPolygon(thrustPoly, Color.White);
-        }
+        canvas.PushState();
+        canvas.Translate(-.8f, 0);
+        canvas.Scale(thrustAnimationState * thrustAnimationState);
+        canvas.StrokeWidth(0.05f);
+        canvas.Stroke(Color.White);
+        canvas.DrawPolygon(thrustPoly);
+        canvas.PopState();
+        
+        canvas.Fill(Color.Black);
+        canvas.DrawPolygon(shipPoly);
 
-        canvas.SetDrawMode(DrawMode.Fill);
-        canvas.DrawPolygon(shipPoly, Color.Black);
-
-        canvas.SetDrawMode(DrawMode.Border);
-        canvas.SetStrokeWidth(.05f);
-        canvas.DrawPolygon(shipPoly, Color.White);
+        canvas.Stroke(Color.White);
+        canvas.StrokeWidth(.05f);
+        canvas.DrawPolygon(shipPoly);
     }
 
     public override void Update()
@@ -78,7 +80,7 @@ internal class Ship : Entity, IRenderable, IDestructable, ICollidable
 
         if (velocity.LengthSquared() > maxSpeed * maxSpeed)
         {
-            velocity = velocity.Normalized() * maxSpeed;
+            velocity = Vector2.Normalize(velocity) * maxSpeed;
         }
 
         if (Mouse.IsButtonPressed(MouseButton.Left))
